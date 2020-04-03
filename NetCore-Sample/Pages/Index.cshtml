@@ -1,0 +1,143 @@
+﻿@page
+@model IndexModel
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title> Power BI Embed</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+    <script src="~/scripts/powerbi.js"></script>
+</head>
+
+<body>
+    @*<script type="text/javascript">
+        Sys.Application.add_load(page_load);
+
+        function page_load() {
+            if (screen.width == "1024") {
+                document.getElementById("reportContainer").style.marginLeft = "94px";
+            }
+        }
+    </script>*@
+    <div class="jumbotron text-center">
+        <h2> <b><i> Example PBI</i> </b></h2>
+        <p><i>Reportes gerenciales para toma de decisiones estratégicas. </i></p>
+    </div>
+    <div>
+        <br />
+        <div class="container-fluid">
+            <h2><i><i class="fa fa-file-text" aria-hidden="true"> Seleccione el reporte a visualizar:</i></i></h2>
+            <p></p>
+            <div class="dropdown">
+                <button class="btn btn-warning dropdown-toggle" id="menu1" type="button" data-toggle="dropdown">
+                    <i class="fa fa-list"><FONT COLOR="black"><b> Power BI Reports </b></FONT></i>
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+
+                    @foreach (var item in Model.Reports)
+                    {
+                        <li>
+                            @*<a asp-page="./GetReport" asp-route-id="@item.Id">@item.Name</a>*@
+
+                            <i class="fa fa-bar-chart" aria-hidden="true">   <a href="@item.EmbedUrl" data-report-id="@item.Id">@item.Name</a></i>
+                        </li>
+                    }
+
+                </ul>
+            </div>
+        </div>
+        <br />
+        <div>
+            <i class="fa fa-exclamation-triangle" aria-hidden="true">  <i>Para Seleccionar un Reporte de otra Área debe Refrescar la Página (F5)!! </i></i>
+        </div>
+        <div class="reportContainer iframeContainer active" style="width: 1480px; height: 800px" id="reportContainer"></div>
+    </div>
+
+    @*<div>
+            <br />
+            <b>Log View</b>
+            <br />
+            <textArea style="width: 900px; height: 200px" id="logView"></textArea>
+        </div>*@
+</body>
+</html>
+<script type="text/javascript">
+
+    // This code is for sample purposes only.
+
+    // Configure IFrame for the Report after you have an Access Token.
+    window.onload = function () {
+        var accessToken = '@Model.AccessToken';
+        var embedUrl = '@Model.EmbedUrl';
+        var reportId = '@Model.ReportId';
+
+        // Embed configuration used to describe the what and how to embed.
+        // This object is used when calling powerbi.embed.
+        // This also includes settings and options such as filters.
+        // You can find more information at https://github.com/Microsoft/PowerBI-JavaScript/wiki/Embed-Configuration-Details.
+
+        // Grab the reference to the div HTML element that will host the report.
+
+
+        // Embed the report and display it within the div container.
+
+        document.querySelectorAll("[data-report-id]").forEach(report => {
+            report.addEventListener('click', function (event) {
+                event.preventDefault();
+                var accessToken = '@Model.AccessToken';
+
+                var config = {
+                    type: 'report',
+                    accessToken: accessToken,
+                    embedUrl: event.target.href,
+                    id: event.target.dataset.reportId,
+                    settings: {
+                        filterPaneEnabled: true,
+                        navContentPaneEnabled: true
+                    }
+                }
+                var reportContainer = document.getElementById('reportContainer');
+
+                console.log(window.frames, event.target.href)
+
+                var report = powerbi.embed(reportContainer, config);
+
+                ////Report.on will add an event handler which prints to Log window.
+                //report.on("loaded", function () {
+                //    var logView = document.getElementById('logView');
+                //    //logView.contentWindow.document.write("<html><body>Loaded<br/></body></html>");
+                //    logView.value += "Loaded\n";
+
+                //    // Report.off removes a given event handler if it exists.
+                //    report.off("loaded");
+                //});
+
+                //// Report.on will add an event handler which prints to Log window.
+                //report.on("rendered", function () {
+                //    var logView = document.getElementById('logView');
+                //    logView.value += "Rendered\n";
+
+                //    // Report.off removes a given event handler if it exists.
+                //    report.off("rendered");
+                //});
+
+                //// Report.on will add an event handler which prints to Log window.
+                //report.on("error", function (event) {
+                //    var logView = document.getElementById('logView');
+                //    logView.value += "Error\n";
+                //    logView.value += (event.detail + "\n");
+                //});
+
+            })
+        });
+
+
+    }
+</script>

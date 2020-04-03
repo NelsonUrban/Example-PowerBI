@@ -1,0 +1,73 @@
+﻿@page
+@model Embed_Sample.Pages.GetReportModel
+@{
+    ViewData["Title"] = "GetReport";
+}
+
+<h2>GetReport</h2>
+
+<div class="reportContainer iframeContainer active" style="width: 1380px; height: 600px" id="reportContainer"></div>
+
+
+<script type="text/javascript">
+
+    // This code is for sample purposes only.
+
+    // Configure IFrame for the Report after you have an Access Token.
+    window.onload = function () {
+        var accessToken = '@Model.AccessToken';
+        var embedUrl = '@Model.EmbedUrl';
+        var reportId = '@Model.ReportId';
+
+        // Embed configuration used to describe the what and how to embed.
+        // This object is used when calling powerbi.embed.
+        // This also includes settings and options such as filters.
+        // You can find more information at https://github.com/Microsoft/PowerBI-JavaScript/wiki/Embed-Configuration-Details.
+
+        //};
+
+        // Grab the reference to the div HTML element that will host the report.
+
+
+        // Embed the report and display it within the div container.
+
+
+
+            var config = {
+                type: 'report',
+                accessToken: accessToken,
+                embedUrl: embedUrl,
+                id: reportId,
+                settings: {
+                    filterPaneEnabled: true,
+                    navContentPaneEnabled: true
+                }
+            }
+            var reportContainer = document.getElementById('reportContainer');
+            var report = powerbi.embed(reportContainer, config);
+         //Report.on will add an event handler which prints to Log window.
+        report.on("loaded", function () {
+            var logView = document.getElementById('logView');
+            //logView.contentWindow.document.write("<html><body>Loaded<br/></body></html>");
+            logView.value += "Loaded\n";
+
+            // Report.off removes a given event handler if it exists.
+            report.off("loaded");
+        });
+
+        // Report.on will add an event handler which prints to Log window.
+        report.on("rendered", function () {
+            var logView = document.getElementById('logView');
+            logView.value += "Rendered\n";
+
+            // Report.off removes a given event handler if it exists.
+            report.off("rendered");
+        });
+
+        // Report.on will add an event handler which prints to Log window.
+        report.on("error", function (event) {
+            var logView = document.getElementById('logView');
+            logView.value += "Error\n";
+            logView.value += (event.detail + "\n");
+        });
+</script>
